@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile – SocialSphere</title>
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/header.css" />
+  <link rel="stylesheet" href="css/sidebar.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/feed.css" />
+  <link rel="stylesheet" href="css/profile.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+<!-- Header -->
+<header class="app-header">
+  <a href="/feed.html" class="header-logo"><i class="fas fa-infinity"></i> SocialSphere</a>
+  <div class="header-search">
+    <i class="fas fa-search search-icon"></i>
+    <input type="search" id="headerSearch" placeholder="Search people, posts…" autocomplete="off" />
+    <div class="search-suggestions" id="searchSuggestions"></div>
+  </div>
+  <div class="header-actions">
+    <button class="header-btn" id="themeToggleBtn" title="Toggle dark mode"><i class="fas fa-moon"></i></button>
+    <a href="/feed.html" class="header-btn" title="Home"><i class="fas fa-home"></i></a>
+    <div class="dropdown">
+      <button class="header-btn" onclick="toggleDropdown(this)"><i class="fas fa-bars"></i></button>
+      <div class="dropdown-menu">
+        <div class="dropdown-item" onclick="window.location.href='/settings.html'"><i class="fas fa-cog"></i> Settings</div>
+        <div class="dropdown-item danger" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Log Out</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="app-layout">
+  <aside class="left-sidebar">
+    <nav class="sidebar-nav">
+      <a href="/feed.html" class="nav-item"><i class="fas fa-home"></i><span class="nav-label">Home</span></a>
+      <a href="/explore.html" class="nav-item"><i class="fas fa-compass"></i><span class="nav-label">Explore</span></a>
+      <a href="/profile.html" class="nav-item active"><i class="fas fa-user"></i><span class="nav-label">Profile</span></a>
+      <a href="/settings.html" class="nav-item"><i class="fas fa-cog"></i><span class="nav-label">Settings</span></a>
+      <a href="#" class="nav-item" onclick="logout();return false;"><i class="fas fa-sign-out-alt"></i><span class="nav-label">Log Out</span></a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <!-- Profile Card -->
+    <div class="profile-info-card" id="profileCard">
+      <div id="coverImageWrap">
+        <div class="profile-cover-placeholder" style="height:180px;background:var(--accent-gradient);"></div>
+      </div>
+      <div style="padding:0 24px 20px;">
+        <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-top:-44px;flex-wrap:wrap;gap:12px;">
+          <div id="avatarWrap">
+            <div class="profile-avatar-placeholder" style="width:88px;height:88px;font-size:2rem;">?</div>
+          </div>
+          <div id="profileActions" style="margin-bottom:4px;"></div>
+        </div>
+        <div id="profileInfo" style="margin-top:12px;">
+          <div class="skeleton skeleton-text" style="width:40%;height:22px;margin-bottom:8px;"></div>
+          <div class="skeleton skeleton-text" style="width:30%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs card" style="margin-bottom:16px;border-radius:var(--radius-lg);">
+      <button class="tab-btn active" data-tab="posts" onclick="switchTab(this, 'posts')"><i class="fas fa-th-large"></i> Posts</button>
+      <button class="tab-btn" data-tab="followers" onclick="switchTab(this, 'followers')"><i class="fas fa-users"></i> Followers</button>
+      <button class="tab-btn" data-tab="following" onclick="switchTab(this, 'following')"><i class="fas fa-user-check"></i> Following</button>
+    </div>
+
+    <!-- Tab Content -->
+    <div id="tab-posts">
+      <div id="profilePosts"><div class="spinner-center"><div class="spinner spinner-lg"></div></div></div>
+    </div>
+    <div id="tab-followers" style="display:none;">
+      <div id="followersList" class="card" style="padding:8px 0;"></div>
+    </div>
+    <div id="tab-following" style="display:none;">
+      <div id="followingList" class="card" style="padding:8px 0;"></div>
+    </div>
+  </main>
+
+  <aside class="right-sidebar">
+    <div class="widget" id="profileSuggestedWidget">
+      <div class="widget-header">Suggested Users <a href="/explore.html">See All</a></div>
+      <div class="widget-body" id="profileSuggestedUsers"></div>
+    </div>
+  </aside>
+</div>
+
+<nav class="mobile-nav">
+  <div class="mobile-nav-items">
+    <a href="/feed.html" class="mobile-nav-item" data-page="feed"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="/explore.html" class="mobile-nav-item" data-page="explore"><i class="fas fa-compass"></i><span>Explore</span></a>
+    <a href="/profile.html" class="mobile-nav-item active" data-page="profile"><i class="fas fa-user"></i><span>Profile</span></a>
+    <a href="/settings.html" class="mobile-nav-item" data-page="settings"><i class="fas fa-cog"></i><span>Settings</span></a>
+  </div>
+</nav>
+
+<button class="back-to-top"><i class="fas fa-arrow-up"></i></button>
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="js/utils.js"></script>
+<script src="js/profile.js"></script>
+<script>
+  let profileUser = null;
+  let currentUser = null; // declared only here (profile.js has no top-level currentUser)
+  let profilePage = 1;
+  let profileHasMore = true;
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    initTheme();
+    initThemeToggle();
+    initBackToTop();
+
+    // Get user ID from URL
+    const params = new URLSearchParams(window.location.search);
+    const userId = params.get('id') || params.get('username');
+    const tab = params.get('tab');
+
+    // Load current user
+    const meRes = await apiFetch('/api/me');
+    if (meRes.ok && meRes.data.success) {
+      currentUser = meRes.data.user;
+    } else {
+      window.location.href = '/login.html';
+      return;
+    }
+
+    // Determine which profile to load
+    const targetId = userId || currentUser.id;
+
+    await loadProfile(targetId);
+
+    if (tab === 'followers') switchTab(document.querySelector('[data-tab="followers"]'), 'followers');
+    else if (tab === 'following') switchTab(document.querySelector('[data-tab="following"]'), 'following');
+    else loadProfilePosts(targetId, true);
+
+    loadSuggestedUsersWidget();
+    initSearch();
+  });
+
+  async function loadProfile(userId) {
+    try {
+      const { ok, data } = await apiFetch(`/api/users/${userId}`);
+      if (!ok || !data.success) {
+        document.getElementById('profileCard').innerHTML = '<div class="empty-state"><i class="fas fa-user-slash"></i><h3>User not found</h3></div>';
+        return;
+      }
+      profileUser = data.user;
+      renderProfile(profileUser);
+    } catch {
+      showToast('Failed to load profile', 'error');
+    }
+  }
+
+  function renderProfile(user) {
+    // Cover
+    const coverWrap = document.getElementById('coverImageWrap');
+    if (user.cover_image) {
+      coverWrap.innerHTML = `<img src="${escapeHtml(user.cover_image)}" alt="Cover" style="width:100%;height:180px;object-fit:cover;" />`;
+    } else {
+      coverWrap.innerHTML = `<div style="width:100%;height:180px;background:var(--accent-gradient);"></div>`;
+    }
+
+    // Avatar
+    const avatarWrap = document.getElementById('avatarWrap');
+    if (user.profile_image) {
+      avatarWrap.innerHTML = `<img src="${escapeHtml(user.profile_image)}" alt="${escapeHtml(user.name)}" class="profile-avatar" />`;
+    } else {
+      avatarWrap.innerHTML = `<div class="profile-avatar-placeholder">${getInitials(user.name)}</div>`;
+    }
+
+    // Actions
+    const actionsWrap = document.getElementById('profileActions');
+    if (user.is_own_profile) {
+      actionsWrap.innerHTML = `<a href="/settings.html" class="btn btn-secondary btn-sm"><i class="fas fa-edit"></i> Edit Profile</a>`;
+    } else {
+      actionsWrap.innerHTML = `
+        <button class="btn btn-primary btn-sm btn-round follow-btn ${user.is_following ? 'following' : ''}"
+          id="profileFollowBtn"
+          onclick="profileFollowToggle()">
+          ${user.is_following ? '<i class="fas fa-user-check"></i> Following' : '<i class="fas fa-user-plus"></i> Follow'}
+        </button>
+      `;
+    }
+
+    // Info
+    const infoWrap = document.getElementById('profileInfo');
+    infoWrap.innerHTML = `
+      <h2 style="font-size:1.4rem;margin-bottom:2px;display:flex;align-items:center;gap:8px;">
+        ${escapeHtml(user.name)}
+      </h2>
+      <div class="profile-username">@${escapeHtml(user.username)}</div>
+      ${user.bio ? `<div class="profile-bio">${escapeHtml(user.bio)}</div>` : ''}
+      <div class="profile-meta">
+        ${user.location ? `<div class="profile-meta-item"><i class="fas fa-map-marker-alt"></i> ${escapeHtml(user.location)}</div>` : ''}
+        ${user.website ? `<div class="profile-meta-item"><i class="fas fa-link"></i> <a href="${escapeHtml(user.website)}" target="_blank" rel="noopener">${escapeHtml(user.website)}</a></div>` : ''}
+        <div class="profile-meta-item"><i class="fas fa-calendar-alt"></i> Joined ${new Date(user.created_at).toLocaleDateString('en-US', {month:'long',year:'numeric'})}</div>
+      </div>
+      <div class="profile-stats">
+        <div class="profile-stat" onclick="switchTab(document.querySelector('[data-tab=posts]'), 'posts')">
+          <span class="value" id="postsStatCount">${formatNumber(user.posts_count)}</span>
+          <span class="label">Posts</span>
+        </div>
+        <div class="profile-stat" onclick="switchTab(document.querySelector('[data-tab=followers]'), 'followers')">
+          <span class="value" id="followersStatCount">${formatNumber(user.followers_count)}</span>
+          <span class="label">Followers</span>
+        </div>
+        <div class="profile-stat" onclick="switchTab(document.querySelector('[data-tab=following]'), 'following')">
+          <span class="value" id="followingStatCount">${formatNumber(user.following_count)}</span>
+          <span class="label">Following</span>
+        </div>
+      </div>
+    `;
+    document.title = `${user.name} (@${user.username}) – SocialSphere`;
+  }
+
+  async function profileFollowToggle() {
+    if (!currentUser || !profileUser) return;
+    const btn = document.getElementById('profileFollowBtn');
+    const isFollowing = btn.classList.contains('following');
+
+    const { ok, data } = await apiFetch('/api/follow', {
+      method: isFollowing ? 'DELETE' : 'POST',
+      body: JSON.stringify({ userId: profileUser.id })
+    });
+    if (ok && data.success) {
+      btn.classList.toggle('following', !isFollowing);
+      btn.innerHTML = !isFollowing
+        ? '<i class="fas fa-user-check"></i> Following'
+        : '<i class="fas fa-user-plus"></i> Follow';
+      const countEl = document.getElementById('followersStatCount');
+      if (countEl) countEl.textContent = formatNumber(data.followers_count);
+      showToast(isFollowing ? 'Unfollowed' : `Now following ${profileUser.name}!`, 'success');
+    }
+  }
+
+  async function loadProfilePosts(userId, reset = false) {
+    const container = document.getElementById('profilePosts');
+    if (reset) { container.innerHTML = skeletonPost().repeat(3); profilePage = 1; profileHasMore = true; }
+
+    const { ok, data } = await apiFetch(`/api/posts?userId=${userId}&page=${profilePage}&limit=10`);
+    if (reset) container.innerHTML = '';
+    if (!ok || !data.success) { container.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><h3>Could not load posts</h3></div>'; return; }
+    if (data.posts.length === 0 && reset) {
+      container.innerHTML = `<div class="empty-state"><i class="fas fa-feather-alt"></i><h3>No posts yet</h3><p>${profileUser?.is_own_profile ? 'Share your first post!' : 'This user has not posted yet.'}</p>${profileUser?.is_own_profile ? '<a href="/feed.html" class="btn btn-primary">Create Post</a>' : ''}</div>`;
+      return;
+    }
+    data.posts.forEach(p => container.appendChild(createPostElement(p)));
+    profileHasMore = data.pagination.hasMore;
+    profilePage++;
+  }
+
+  async function loadFollowList(type) {
+    const containerId = type === 'followers' ? 'followersList' : 'followingList';
+    const container = document.getElementById(containerId);
+    container.innerHTML = '<div class="spinner-center"><div class="spinner"></div></div>';
+
+    const { ok, data } = await apiFetch(`/api/follow/${type}/${profileUser.id}`);
+    const list = type === 'followers' ? data.followers : data.following;
+
+    if (!ok || !data.success || !list || list.length === 0) {
+      container.innerHTML = `<div class="empty-state" style="padding:40px;"><i class="fas fa-users"></i><h3>No ${type} yet</h3></div>`;
+      return;
+    }
+    container.innerHTML = '';
+    list.forEach(u => {
+      if (!u) return;
+      const el = document.createElement('div');
+      el.className = 'suggested-user';
+      el.innerHTML = `
+        <a href="/profile.html?id=${u.id}">
+          ${u.profile_image ? `<img src="${escapeHtml(u.profile_image)}" alt="${escapeHtml(u.name)}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;" />` : `<div class="avatar-placeholder" style="width:44px;height:44px;font-size:1rem;">${getInitials(u.name)}</div>`}
+        </a>
+        <div class="suggested-user-info">
+          <a href="/profile.html?id=${u.id}" class="suggested-user-name">${escapeHtml(u.name)}</a>
+          <div class="suggested-user-bio">@${escapeHtml(u.username)}</div>
+          ${u.bio ? `<div class="suggested-user-bio">${escapeHtml(u.bio)}</div>` : ''}
+        </div>
+        ${currentUser && currentUser.id !== u.id ? `<button class="btn btn-outline btn-sm btn-round" onclick="followUser('${u.id}', this)">Follow</button>` : ''}
+      `;
+      container.appendChild(el);
+    });
+  }
+
+  function switchTab(btn, tabName) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-posts').style.display = 'none';
+    document.getElementById('tab-followers').style.display = 'none';
+    document.getElementById('tab-following').style.display = 'none';
+    document.getElementById(`tab-${tabName}`).style.display = 'block';
+
+    if (tabName === 'posts') loadProfilePosts(profileUser?.id, true);
+    else if (tabName === 'followers') loadFollowList('followers');
+    else if (tabName === 'following') loadFollowList('following');
+  }
+
+  async function loadSuggestedUsersWidget() {
+    try {
+      const { ok, data } = await apiFetch('/api/users/suggested');
+      const container = document.getElementById('profileSuggestedUsers');
+      if (!ok || !data.success || !data.users.length) { document.getElementById('profileSuggestedWidget').style.display = 'none'; return; }
+      container.innerHTML = '';
+      data.users.forEach(user => {
+        const el = document.createElement('div');
+        el.className = 'suggested-user';
+        el.innerHTML = `
+          <a href="/profile.html?id=${user.id}">
+            ${user.profile_image ? `<img src="${escapeHtml(user.profile_image)}" alt="${escapeHtml(user.name)}" style="width:40px;height:40px;border-radius:50%;object-fit:cover;" />` : `<div class="avatar-placeholder" style="width:40px;height:40px;font-size:0.95rem;">${getInitials(user.name)}</div>`}
+          </a>
+          <div class="suggested-user-info">
+            <a href="/profile.html?id=${user.id}" class="suggested-user-name">${escapeHtml(user.name)}</a>
+            <div class="suggested-user-bio">@${escapeHtml(user.username)}</div>
+          </div>
+          <button class="btn btn-outline btn-sm btn-round follow-btn" onclick="followUser('${user.id}', this)">Follow</button>
+        `;
+        container.appendChild(el);
+      });
+    } catch { }
+  }
+</script>
+</body>
+</html>

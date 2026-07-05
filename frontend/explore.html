@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Explore – SocialSphere</title>
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/header.css" />
+  <link rel="stylesheet" href="css/sidebar.css" />
+  <link rel="stylesheet" href="css/components.css" />
+  <link rel="stylesheet" href="css/feed.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .explore-header { background: var(--accent-gradient); border-radius: var(--radius-lg); padding: 28px; margin-bottom: 20px; color: white; }
+    .explore-header h2 { color: white; font-size: 1.5rem; margin-bottom: 8px; }
+    .explore-header p { color: rgba(255,255,255,0.8); margin-bottom: 18px; }
+    .explore-search-wrap { position: relative; }
+    .explore-search-wrap input { width: 100%; padding: 13px 20px 13px 44px; border-radius: 9999px; border: none; font-size: 1rem; background: rgba(255,255,255,0.95); color: var(--text-primary); box-shadow: 0 4px 16px rgba(0,0,0,0.15); }
+    .explore-search-wrap input:focus { outline: none; box-shadow: 0 4px 16px rgba(0,0,0,0.2); }
+    .explore-search-wrap i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+  </style>
+</head>
+<body>
+<header class="app-header">
+  <a href="/feed.html" class="header-logo"><i class="fas fa-infinity"></i> SocialSphere</a>
+  <div class="header-search">
+    <i class="fas fa-search search-icon"></i>
+    <input type="search" id="headerSearch" placeholder="Search…" autocomplete="off" />
+    <div class="search-suggestions" id="searchSuggestions"></div>
+  </div>
+  <div class="header-actions">
+    <button class="header-btn" id="themeToggleBtn"><i class="fas fa-moon"></i></button>
+    <a href="/feed.html" class="header-btn"><i class="fas fa-home"></i></a>
+    <div class="dropdown">
+      <button class="header-btn" onclick="toggleDropdown(this)"><i class="fas fa-bars"></i></button>
+      <div class="dropdown-menu">
+        <div class="dropdown-item" onclick="window.location.href='/profile.html'"><i class="fas fa-user"></i> Profile</div>
+        <div class="dropdown-item" onclick="window.location.href='/settings.html'"><i class="fas fa-cog"></i> Settings</div>
+        <div class="dropdown-item danger" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Log Out</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="app-layout">
+  <aside class="left-sidebar">
+    <nav class="sidebar-nav">
+      <a href="/feed.html" class="nav-item"><i class="fas fa-home"></i><span class="nav-label">Home</span></a>
+      <a href="/explore.html" class="nav-item active"><i class="fas fa-compass"></i><span class="nav-label">Explore</span></a>
+      <a href="/profile.html" class="nav-item"><i class="fas fa-user"></i><span class="nav-label">Profile</span></a>
+      <a href="/settings.html" class="nav-item"><i class="fas fa-cog"></i><span class="nav-label">Settings</span></a>
+      <a href="#" class="nav-item" onclick="logout();return false;"><i class="fas fa-sign-out-alt"></i><span class="nav-label">Log Out</span></a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+    <!-- Explore Hero -->
+    <div class="explore-header">
+      <h2><i class="fas fa-compass"></i> Explore SocialSphere</h2>
+      <p>Discover people, posts, and trending topics.</p>
+      <div class="explore-search-wrap">
+        <i class="fas fa-search"></i>
+        <input type="search" id="exploreSearch" placeholder="Search users or posts…" autocomplete="off" />
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs card" style="margin-bottom:16px;border-radius:var(--radius-lg);">
+      <button class="tab-btn active" onclick="switchExploreTab(this, 'people')"><i class="fas fa-users"></i> People</button>
+      <button class="tab-btn" onclick="switchExploreTab(this, 'posts')"><i class="fas fa-newspaper"></i> Posts</button>
+    </div>
+
+    <!-- People tab -->
+    <div id="exploreTab-people">
+      <div id="usersGrid" class="search-results-grid">
+        <div class="spinner-center" style="grid-column:1/-1;"><div class="spinner spinner-lg"></div></div>
+      </div>
+      <div id="usersLoadMore" style="text-align:center;padding:20px;display:none;">
+        <button class="btn btn-secondary" id="loadMoreUsersBtn" onclick="loadMoreUsers()">Load More</button>
+      </div>
+    </div>
+
+    <!-- Posts tab -->
+    <div id="exploreTab-posts" style="display:none;">
+      <div id="postsContainer"></div>
+    </div>
+  </main>
+
+  <aside class="right-sidebar">
+    <div class="widget">
+      <div class="widget-header">Trending Tags</div>
+      <div class="widget-body">
+        <div class="trending-item" onclick="searchByTag('javascript')"><div class="trending-label">Trending in Tech</div><div class="trending-tag">#javascript</div><div class="trending-posts">12.5K posts</div></div>
+        <div class="trending-item" onclick="searchByTag('webdev')"><div class="trending-label">Trending</div><div class="trending-tag">#webdev</div><div class="trending-posts">8.2K posts</div></div>
+        <div class="trending-item" onclick="searchByTag('design')"><div class="trending-label">Trending in Design</div><div class="trending-tag">#design</div><div class="trending-posts">6.1K posts</div></div>
+        <div class="trending-item" onclick="searchByTag('supabase')"><div class="trending-label">Trending</div><div class="trending-tag">#supabase</div><div class="trending-posts">3.4K posts</div></div>
+        <div class="trending-item" onclick="searchByTag('nodejs')"><div class="trending-label">Trending in Dev</div><div class="trending-tag">#nodejs</div><div class="trending-posts">9.8K posts</div></div>
+      </div>
+    </div>
+  </aside>
+</div>
+
+<nav class="mobile-nav">
+  <div class="mobile-nav-items">
+    <a href="/feed.html" class="mobile-nav-item" data-page="feed"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="/explore.html" class="mobile-nav-item active" data-page="explore"><i class="fas fa-compass"></i><span>Explore</span></a>
+    <a href="/profile.html" class="mobile-nav-item" data-page="profile"><i class="fas fa-user"></i><span>Profile</span></a>
+    <a href="/settings.html" class="mobile-nav-item" data-page="settings"><i class="fas fa-cog"></i><span>Settings</span></a>
+  </div>
+</nav>
+
+<button class="back-to-top"><i class="fas fa-arrow-up"></i></button>
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="js/utils.js"></script>
+<script src="js/profile.js"></script>
+<script>
+  let currentUser = null;
+  let usersPage = 1;
+  let usersHasMore = true;
+  let activeTab = 'people';
+  let searchQuery = '';
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    initTheme();
+    initThemeToggle();
+    initBackToTop();
+
+    const meRes = await apiFetch('/api/me');
+    if (meRes.ok && meRes.data.success) currentUser = meRes.data.user;
+    else { window.location.href = '/login.html'; return; }
+
+    // Check URL params
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get('q') || params.get('tag');
+    if (q) {
+      document.getElementById('exploreSearch').value = q;
+      searchQuery = q;
+    }
+
+    loadAllUsers(true);
+
+    // Search with debounce
+    const doSearch = debounce(async (q) => {
+      searchQuery = q;
+      if (activeTab === 'people') loadAllUsers(true);
+      else loadAllPosts(true);
+    }, 400);
+
+    document.getElementById('exploreSearch').addEventListener('input', e => doSearch(e.target.value));
+    document.getElementById('exploreSearch').addEventListener('keydown', e => {
+      if (e.key === 'Enter') doSearch(e.target.value);
+    });
+    initSearch();
+  });
+
+  async function loadAllUsers(reset = false) {
+    if (reset) { usersPage = 1; usersHasMore = true; document.getElementById('usersGrid').innerHTML = '<div class="spinner-center" style="grid-column:1/-1;"><div class="spinner spinner-lg"></div></div>'; }
+    const url = searchQuery
+      ? `/api/search/users?q=${encodeURIComponent(searchQuery)}&page=${usersPage}&limit=12`
+      : `/api/users?page=${usersPage}&limit=12`;
+    const { ok, data } = await apiFetch(url);
+    const grid = document.getElementById('usersGrid');
+    if (reset) grid.innerHTML = '';
+    if (!ok || !data.success) { if (reset) grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><i class="fas fa-users-slash"></i><h3>No users found</h3></div>'; return; }
+    const users = data.users || [];
+    if (users.length === 0 && reset) { grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><i class="fas fa-users-slash"></i><h3>No users found</h3><p>Try a different search term</p></div>'; return; }
+    users.forEach(u => {
+      const card = document.createElement('div');
+      card.className = 'user-card-grid';
+      const isFollowing = u.is_following;
+      card.innerHTML = `
+        ${u.profile_image ? `<img src="${escapeHtml(u.profile_image)}" alt="${escapeHtml(u.name)}" loading="lazy" />` : `<div class="avatar-placeholder" style="width:64px;height:64px;font-size:1.4rem;margin:0 auto 12px;">${getInitials(u.name)}</div>`}
+        <div class="name">${escapeHtml(u.name)}</div>
+        <div class="username">@${escapeHtml(u.username)}</div>
+        ${u.bio ? `<div class="bio">${escapeHtml(u.bio)}</div>` : ''}
+        <a href="/profile.html?id=${u.id}" class="btn btn-outline btn-sm btn-round btn-full" style="margin-top:4px;">View Profile</a>
+        ${currentUser && currentUser.id !== u.id ? `<button class="btn btn-sm btn-round btn-full follow-btn ${isFollowing ? 'btn-secondary following' : 'btn-primary'}" style="margin-top:8px;" onclick="followUser('${u.id}', this)">${isFollowing ? '<i class=\'fas fa-user-check\'></i> Following' : 'Follow'}</button>` : ''}
+      `;
+      grid.appendChild(card);
+    });
+    usersPage++;
+    usersHasMore = data.pagination?.total > usersPage * 12;
+    document.getElementById('usersLoadMore').style.display = usersHasMore ? 'block' : 'none';
+  }
+
+  async function loadAllPosts(reset = false) {
+    const container = document.getElementById('postsContainer');
+    if (reset) { container.innerHTML = skeletonPost().repeat(3); }
+    const url = searchQuery
+      ? `/api/search/posts?q=${encodeURIComponent(searchQuery)}&limit=10`
+      : '/api/posts?limit=10';
+    const { ok, data } = await apiFetch(url);
+    if (reset) container.innerHTML = '';
+    if (!ok || !data.success || !(data.posts || []).length) {
+      container.innerHTML = '<div class="empty-state"><i class="fas fa-newspaper"></i><h3>No posts found</h3></div>';
+      return;
+    }
+    (data.posts || []).forEach(p => container.appendChild(createPostElement(p)));
+  }
+
+  function loadMoreUsers() { loadAllUsers(false); }
+
+  function switchExploreTab(btn, tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeTab = tab;
+    document.getElementById('exploreTab-people').style.display = tab === 'people' ? 'block' : 'none';
+    document.getElementById('exploreTab-posts').style.display = tab === 'posts' ? 'block' : 'none';
+    if (tab === 'posts' && document.getElementById('postsContainer').innerHTML === '') loadAllPosts(true);
+  }
+
+  function searchByTag(tag) {
+    document.getElementById('exploreSearch').value = '#' + tag;
+    switchExploreTab(document.querySelectorAll('.tab-btn')[1], 'posts');
+    searchQuery = tag;
+    loadAllPosts(true);
+  }
+</script>
+</body>
+</html>

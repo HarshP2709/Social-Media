@@ -1,0 +1,13 @@
+/* ============================================================
+   style.css — Import Hub
+   All styles have been split into separate files.
+   This file imports them all for backwards compatibility.
+   ============================================================ */
+
+@import url('base.css');
+@import url('header.css');
+@import url('sidebar.css');
+@import url('components.css');
+@import url('feed.css');
+@import url('profile.css');
+@import url('auth.css');

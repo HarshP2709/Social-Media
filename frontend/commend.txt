@@ -1,0 +1,1 @@
+taskkill /F /PID (netstat -ano | Select-String ":5000 .*LISTENING" | ForEach-Object { ($_ -split '\s+')[-1] } | Select-Object -First 1)
