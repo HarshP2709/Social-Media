@@ -42,19 +42,34 @@ const allowedOrigins = [
   'http://localhost:5500',   // VS Code Live Server
   'http://127.0.0.1:5500',
   'http://localhost:3000',
-  process.env.CLIENT_URL
+  ...(process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim()) : [process.env.CLIENT_URL])
 ].filter(Boolean);
 
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (curl, Postman, server-to-server)
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    return callback(new Error(`CORS blocked: ${origin}`));
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+app.use(cors((req, callback) => {
+  const origin = req.header('Origin');
+  const corsOptions = {
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  };
+
+  if (!origin) {
+    corsOptions.origin = true;
+  } else {
+    let originHost = '';
+    try {
+      originHost = new URL(origin).host;
+    } catch (e) { }
+
+    const isSameOrigin = req.headers.host && originHost === req.headers.host;
+    if (isSameOrigin || allowedOrigins.includes(origin)) {
+      corsOptions.origin = true;
+    } else {
+      corsOptions.origin = false;
+    }
+  }
+
+  callback(null, corsOptions);
 }));
 
 // ─── Body Parsing ───────────────────────────────────────────────────────────
