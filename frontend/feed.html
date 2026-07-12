@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Feed – SocialSphere</title>
+  <title>Feed – PulseFeed</title>
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/header.css" />
   <link rel="stylesheet" href="css/sidebar.css" />
@@ -11,280 +12,318 @@
   <link rel="stylesheet" href="css/feed.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
+
 <body>
 
-<!-- Header -->
-<header class="app-header">
-  <a href="/feed.html" class="header-logo"><i class="fas fa-infinity"></i> SocialSphere</a>
-  <div class="header-search">
-    <i class="fas fa-search search-icon"></i>
-    <input type="search" id="headerSearch" placeholder="Search people, posts…" autocomplete="off" aria-label="Search" />
-    <div class="search-suggestions" id="searchSuggestions"></div>
-  </div>
-  <div class="header-actions">
-    <button class="header-btn" id="themeToggleBtn" title="Toggle dark mode" aria-label="Toggle theme">
-      <i class="fas fa-moon"></i>
-    </button>
-    <a href="/explore.html" class="header-btn" title="Explore" aria-label="Explore">
-      <i class="fas fa-compass"></i>
-    </a>
-    <div class="dropdown" id="notificationDropdown">
-      <button class="header-btn" id="notificationBtn" title="Notifications" aria-label="Notifications" onclick="openNotifications(this)">
-        <i class="fas fa-bell"></i>
-        <span class="badge" id="notificationBadge" style="display:none;">0</span>
+  <!-- Header -->
+  <header class="app-header">
+    <a href="/feed.html" class="header-logo"><i class="fas fa-infinity"></i> PulseFeed</a>
+    <div class="header-search">
+      <i class="fas fa-search search-icon"></i>
+      <input type="search" id="headerSearch" placeholder="Search people, posts…" autocomplete="off"
+        aria-label="Search" />
+      <div class="search-suggestions" id="searchSuggestions"></div>
+    </div>
+    <div class="header-actions">
+      <button class="header-btn" id="themeToggleBtn" title="Toggle dark mode" aria-label="Toggle theme">
+        <i class="fas fa-moon"></i>
       </button>
-      <div class="dropdown-menu notif-panel" id="notificationPanel">
-        <div class="notif-panel-header">
-          <span>Notifications</span>
-          <button class="notif-mark-read-btn" onclick="markAllNotificationsRead()">Mark all read</button>
-        </div>
-        <div id="notificationList">
-          <div class="spinner-center" style="padding:32px;"><div class="spinner"></div></div>
-        </div>
-      </div>
-    </div>
-    <a href="#" id="headerAvatarLink">
-      <img src="" alt="Profile" class="header-avatar" id="headerAvatar" style="display:none;" />
-    </a>
-    <div class="dropdown">
-      <button class="header-btn" onclick="toggleDropdown(this)" aria-label="Menu">
-        <i class="fas fa-bars"></i>
-      </button>
-      <div class="dropdown-menu">
-        <div class="dropdown-item" onclick="window.location.href='/profile.html'"><i class="fas fa-user"></i> Profile</div>
-        <div class="dropdown-item" onclick="window.location.href='/settings.html'"><i class="fas fa-cog"></i> Settings</div>
-        <div class="dropdown-item" onclick="toggleTheme() && document.getElementById('themeToggleBtn').innerHTML = document.documentElement.getAttribute(\'data-theme\')===\'dark\'?\'<i class=&quot;fas fa-sun&quot;></i>\':\'<i class=&quot;fas fa-moon&quot;></i>\'"">
-          <i class="fas fa-moon"></i> Dark Mode
-        </div>
-        <div class="dropdown-item danger" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Log Out</div>
-      </div>
-    </div>
-  </div>
-</header>
-
-<!-- Main Layout -->
-<div class="app-layout">
-
-  <!-- Left Sidebar -->
-  <aside class="left-sidebar">
-    <!-- User Card -->
-    <div class="sidebar-user-card" id="sidebarUserCard">
-      <div class="skeleton skeleton-avatar" style="margin-bottom:10px;"></div>
-      <div class="skeleton skeleton-text" style="width:70%;"></div>
-      <div class="skeleton skeleton-text short"></div>
-    </div>
-
-    <!-- Profile Completion -->
-    <div class="profile-completion" id="profileCompletion">
-      <div class="completion-header">
-        <span>Profile Completion</span>
-        <span id="completionPct">0%</span>
-      </div>
-      <div class="completion-bar"><div class="completion-fill" id="completionFill" style="width:0%;"></div></div>
-      <div class="completion-text" id="completionText">Loading...</div>
-    </div>
-
-    <!-- Navigation -->
-    <nav class="sidebar-nav" aria-label="Main navigation">
-      <a href="/feed.html" class="nav-item active"><i class="fas fa-home"></i><span class="nav-label">Home</span></a>
-      <a href="/explore.html" class="nav-item"><i class="fas fa-compass"></i><span class="nav-label">Explore</span></a>
-      <a href="/profile.html" class="nav-item"><i class="fas fa-user"></i><span class="nav-label">Profile</span></a>
-      <a href="/settings.html" class="nav-item"><i class="fas fa-cog"></i><span class="nav-label">Settings</span></a>
-      <a href="#" class="nav-item" onclick="logout(); return false;"><i class="fas fa-sign-out-alt"></i><span class="nav-label">Log Out</span></a>
-    </nav>
-  </aside>
-
-  <!-- Main Content -->
-  <main class="main-content" role="main">
-
-    <!-- Create Post Card -->
-    <div class="create-post-card">
-      <form id="createPostForm">
-        <div class="create-post-top">
-          <div id="createPostAvatar" style="flex-shrink:0;"></div>
-          <textarea
-            id="createPostContent"
-            class="create-post-textarea"
-            placeholder="What's on your mind?"
-            rows="2"
-            maxlength="500"
-            aria-label="Create post"
-          ></textarea>
-        </div>
-        <!-- Image preview -->
-        <div id="postImagePreview" style="display:none;" class="post-image-preview">
-          <img src="" alt="Preview" id="previewImgEl" />
-          <button type="button" class="remove-image" id="removeImageBtn" aria-label="Remove image"><i class="fas fa-times"></i></button>
-        </div>
-        <div class="create-post-footer">
-          <div class="create-post-actions">
-            <label for="postImageInput" class="create-post-action-btn" style="cursor:pointer;" title="Add image">
-              <i class="fas fa-image"></i> Photo
-              <input type="file" id="postImageInput" accept="image/*" style="display:none;" aria-label="Upload image" />
-            </label>
-            <button type="button" class="create-post-action-btn" onclick="document.getElementById('createPostContent').focus()" title="Add emoji">
-              <i class="fas fa-smile"></i> Mood
-            </button>
+      <a href="/explore.html" class="header-btn" title="Explore" aria-label="Explore">
+        <i class="fas fa-compass"></i>
+      </a>
+      <div class="dropdown" id="notificationDropdown">
+        <button class="header-btn" id="notificationBtn" title="Notifications" aria-label="Notifications"
+          onclick="openNotifications(this)">
+          <i class="fas fa-bell"></i>
+          <span class="badge" id="notificationBadge" style="display:none;">0</span>
+        </button>
+        <div class="dropdown-menu notif-panel" id="notificationPanel">
+          <div class="notif-panel-header">
+            <span>Notifications</span>
+            <button class="notif-mark-read-btn" onclick="markAllNotificationsRead()">Mark all read</button>
           </div>
-          <div style="display:flex;align-items:center;">
-            <span class="char-counter"><span id="charCount">0</span>/500</span>
-            <button type="submit" class="btn btn-primary btn-sm btn-round" id="createPostBtn" disabled>
+          <div id="notificationList">
+            <div class="spinner-center" style="padding:32px;">
+              <div class="spinner"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a href="#" id="headerAvatarLink">
+        <img src="" alt="Profile" class="header-avatar" id="headerAvatar" style="display:none;" />
+      </a>
+      <div class="dropdown">
+        <button class="header-btn" onclick="toggleDropdown(this)" aria-label="Menu">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="dropdown-menu">
+          <div class="dropdown-item" onclick="window.location.href='/profile.html'"><i class="fas fa-user"></i> Profile
+          </div>
+          <div class="dropdown-item" onclick="window.location.href='/settings.html'"><i class="fas fa-cog"></i> Settings
+          </div>
+          <div class="dropdown-item"
+            onclick="toggleTheme() && document.getElementById('themeToggleBtn').innerHTML = document.documentElement.getAttribute(\'data-theme\')===\'dark\'?\'<i class=&quot;fas fa-sun&quot;></i>\':\'<i class=&quot;fas fa-moon&quot;></i>\'"">
+          <i class=" fas fa-moon"></i> Dark Mode
+          </div>
+          <div class="dropdown-item danger" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Log Out</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Layout -->
+  <div class="app-layout">
+
+    <!-- Left Sidebar -->
+    <aside class="left-sidebar">
+      <!-- User Card -->
+      <div class="sidebar-user-card" id="sidebarUserCard">
+        <div class="skeleton skeleton-avatar" style="margin-bottom:10px;"></div>
+        <div class="skeleton skeleton-text" style="width:70%;"></div>
+        <div class="skeleton skeleton-text short"></div>
+      </div>
+
+      <!-- Profile Completion -->
+      <div class="profile-completion" id="profileCompletion">
+        <div class="completion-header">
+          <span>Profile Completion</span>
+          <span id="completionPct">0%</span>
+        </div>
+        <div class="completion-bar">
+          <div class="completion-fill" id="completionFill" style="width:0%;"></div>
+        </div>
+        <div class="completion-text" id="completionText">Loading...</div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="sidebar-nav" aria-label="Main navigation">
+        <a href="/feed.html" class="nav-item active"><i class="fas fa-home"></i><span class="nav-label">Home</span></a>
+        <a href="/explore.html" class="nav-item"><i class="fas fa-compass"></i><span
+            class="nav-label">Explore</span></a>
+        <a href="/profile.html" class="nav-item"><i class="fas fa-user"></i><span class="nav-label">Profile</span></a>
+        <a href="/settings.html" class="nav-item"><i class="fas fa-cog"></i><span class="nav-label">Settings</span></a>
+        <a href="#" class="nav-item" onclick="logout(); return false;"><i class="fas fa-sign-out-alt"></i><span
+            class="nav-label">Log Out</span></a>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" role="main">
+
+      <!-- Create Post Card -->
+      <div class="create-post-card">
+        <form id="createPostForm">
+          <div class="create-post-top">
+            <div id="createPostAvatar" style="flex-shrink:0;"></div>
+            <textarea id="createPostContent" class="create-post-textarea" placeholder="What's on your mind?" rows="2"
+              maxlength="500" aria-label="Create post"></textarea>
+          </div>
+          <!-- Image preview -->
+          <div id="postImagePreview" style="display:none;" class="post-image-preview">
+            <img src="" alt="Preview" id="previewImgEl" />
+            <button type="button" class="remove-image" id="removeImageBtn" aria-label="Remove image"><i
+                class="fas fa-times"></i></button>
+          </div>
+          <div class="create-post-footer">
+            <div class="create-post-actions">
+              <label for="postImageInput" class="create-post-action-btn" style="cursor:pointer;" title="Add image">
+                <i class="fas fa-image"></i> Photo
+                <input type="file" id="postImageInput" accept="image/*" style="display:none;"
+                  aria-label="Upload image" />
+              </label>
+              <button type="button" class="create-post-action-btn"
+                onclick="document.getElementById('createPostContent').focus()" title="Add emoji">
+                <i class="fas fa-smile"></i> Mood
+              </button>
+            </div>
+            <div style="display:flex;align-items:center;">
+              <span class="char-counter"><span id="charCount">0</span>/500</span>
+              <button type="submit" class="btn btn-primary btn-sm btn-round" id="createPostBtn" disabled>
+                <i class="fas fa-paper-plane"></i> Post
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Feed -->
+      <div id="feedContainer">
+        <!-- Posts loaded dynamically -->
+      </div>
+
+      <!-- Infinite Scroll Loader -->
+      <div id="feedLoader" style="display:none;" class="spinner-center">
+        <div class="spinner"></div>
+      </div>
+
+      <!-- Infinite scroll sentinel -->
+      <div id="infiniteScrollSentinel" style="height:10px;"></div>
+
+    </main>
+
+    <!-- Right Sidebar -->
+    <aside class="right-sidebar">
+      <!-- Suggested Users -->
+      <div class="widget">
+        <div class="widget-header">
+          People You May Know
+          <a href="/explore.html">See All</a>
+        </div>
+        <div class="widget-body" id="suggestedUsers">
+          <div class="skeleton-post" style="padding:12px 16px;">
+            <div class="skeleton-header">
+              <div class="skeleton skeleton-avatar" style="width:40px;height:40px;"></div>
+              <div style="flex:1;">
+                <div class="skeleton skeleton-text" style="width:60%;"></div>
+                <div class="skeleton skeleton-text short" style="width:40%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trending -->
+      <div class="widget">
+        <div class="widget-header">Trending</div>
+        <div class="widget-body">
+          <div class="trending-item">
+            <div class="trending-label">Trending in Tech</div>
+            <div class="trending-tag">#javascript</div>
+            <div class="trending-posts">12.5K posts</div>
+          </div>
+          <div class="trending-item">
+            <div class="trending-label">Trending</div>
+            <div class="trending-tag">#webdev</div>
+            <div class="trending-posts">8.2K posts</div>
+          </div>
+          <div class="trending-item">
+            <div class="trending-label">Trending in Design</div>
+            <div class="trending-tag">#uidesign</div>
+            <div class="trending-posts">6.1K posts</div>
+          </div>
+          <div class="trending-item">
+            <div class="trending-label">Trending</div>
+            <div class="trending-tag">#supabase</div>
+            <div class="trending-posts">3.4K posts</div>
+          </div>
+          <div class="trending-item">
+            <div class="trending-label">Trending in Dev</div>
+            <div class="trending-tag">#nodejs</div>
+            <div class="trending-posts">9.8K posts</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Links -->
+      <div style="padding:12px 16px;font-size:0.78rem;color:var(--text-muted);line-height:2;">
+        <a href="#" style="color:inherit;margin-right:10px;">About</a>
+        <a href="#" style="color:inherit;margin-right:10px;">Privacy</a>
+        <a href="#" style="color:inherit;margin-right:10px;">Terms</a>
+        <a href="#" style="color:inherit;">Help</a>
+        <div style="margin-top:8px;">© 2024 PulseFeed</div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Mobile Bottom Nav -->
+  <nav class="mobile-nav" aria-label="Mobile navigation">
+    <div class="mobile-nav-items">
+      <a href="/feed.html" class="mobile-nav-item active" data-page="feed"><i
+          class="fas fa-home"></i><span>Home</span></a>
+      <a href="/explore.html" class="mobile-nav-item" data-page="explore"><i
+          class="fas fa-compass"></i><span>Explore</span></a>
+      <a href="#" class="mobile-nav-item" data-page="create" onclick="openCreatePostModal();return false;"><i
+          class="fas fa-plus-square"></i><span>Post</span></a>
+      <a href="/profile.html" class="mobile-nav-item" data-page="profile"><i
+          class="fas fa-user"></i><span>Profile</span></a>
+      <a href="/settings.html" class="mobile-nav-item" data-page="settings"><i
+          class="fas fa-cog"></i><span>Settings</span></a>
+    </div>
+  </nav>
+
+  <!-- FAB -->
+  <button class="fab" onclick="openCreatePostModal()" title="Create Post" aria-label="Create new post">
+    <i class="fas fa-plus"></i>
+  </button>
+
+  <!-- Create Post Modal -->
+  <div class="modal-overlay" id="createPostModal">
+    <div class="modal" style="max-width:520px;">
+      <div class="modal-header">
+        <h3><i class="fas fa-pen" style="color:var(--accent-primary);margin-right:8px;"></i>Create Post</h3>
+        <button class="modal-close" onclick="closeCreatePostModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;gap:12px;align-items:flex-start;">
+          <div id="modalPostAvatar"></div>
+          <textarea id="modalPostContent" class="form-input" placeholder="What's on your mind?" rows="4" maxlength="500"
+            style="resize:none;flex:1;" oninput="updateModalCharCount(this)"></textarea>
+        </div>
+        <div id="modalImagePreview" style="display:none;margin-top:12px;position:relative;">
+          <img id="modalPreviewImg" src="" alt="Preview"
+            style="width:100%;max-height:240px;object-fit:cover;border-radius:var(--radius-md);" />
+          <button type="button" onclick="clearModalImage()"
+            style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.6);color:white;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:0.9rem;"><i
+              class="fas fa-times"></i></button>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;">
+          <div style="display:flex;gap:4px;">
+            <label for="modalImageInput" class="create-post-action-btn" style="cursor:pointer;">
+              <i class="fas fa-image"></i> Photo
+              <input type="file" id="modalImageInput" accept="image/*" style="display:none;"
+                onchange="previewModalImage(this)" />
+            </label>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:0.78rem;color:var(--text-muted);"><span id="modalCharCount">0</span>/500</span>
+            <button class="btn btn-primary btn-sm btn-round" id="modalPostBtn" onclick="submitModalPost()" disabled>
               <i class="fas fa-paper-plane"></i> Post
             </button>
           </div>
         </div>
-      </form>
-    </div>
-
-    <!-- Feed -->
-    <div id="feedContainer">
-      <!-- Posts loaded dynamically -->
-    </div>
-
-    <!-- Infinite Scroll Loader -->
-    <div id="feedLoader" style="display:none;" class="spinner-center">
-      <div class="spinner"></div>
-    </div>
-
-    <!-- Infinite scroll sentinel -->
-    <div id="infiniteScrollSentinel" style="height:10px;"></div>
-
-  </main>
-
-  <!-- Right Sidebar -->
-  <aside class="right-sidebar">
-    <!-- Suggested Users -->
-    <div class="widget">
-      <div class="widget-header">
-        People You May Know
-        <a href="/explore.html">See All</a>
-      </div>
-      <div class="widget-body" id="suggestedUsers">
-        <div class="skeleton-post" style="padding:12px 16px;">
-          <div class="skeleton-header"><div class="skeleton skeleton-avatar" style="width:40px;height:40px;"></div><div style="flex:1;"><div class="skeleton skeleton-text" style="width:60%;"></div><div class="skeleton skeleton-text short" style="width:40%;"></div></div></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Trending -->
-    <div class="widget">
-      <div class="widget-header">Trending</div>
-      <div class="widget-body">
-        <div class="trending-item"><div class="trending-label">Trending in Tech</div><div class="trending-tag">#javascript</div><div class="trending-posts">12.5K posts</div></div>
-        <div class="trending-item"><div class="trending-label">Trending</div><div class="trending-tag">#webdev</div><div class="trending-posts">8.2K posts</div></div>
-        <div class="trending-item"><div class="trending-label">Trending in Design</div><div class="trending-tag">#uidesign</div><div class="trending-posts">6.1K posts</div></div>
-        <div class="trending-item"><div class="trending-label">Trending</div><div class="trending-tag">#supabase</div><div class="trending-posts">3.4K posts</div></div>
-        <div class="trending-item"><div class="trending-label">Trending in Dev</div><div class="trending-tag">#nodejs</div><div class="trending-posts">9.8K posts</div></div>
-      </div>
-    </div>
-
-    <!-- Footer Links -->
-    <div style="padding:12px 16px;font-size:0.78rem;color:var(--text-muted);line-height:2;">
-      <a href="#" style="color:inherit;margin-right:10px;">About</a>
-      <a href="#" style="color:inherit;margin-right:10px;">Privacy</a>
-      <a href="#" style="color:inherit;margin-right:10px;">Terms</a>
-      <a href="#" style="color:inherit;">Help</a>
-      <div style="margin-top:8px;">© 2024 SocialSphere</div>
-    </div>
-  </aside>
-
-</div>
-
-<!-- Mobile Bottom Nav -->
-<nav class="mobile-nav" aria-label="Mobile navigation">
-  <div class="mobile-nav-items">
-    <a href="/feed.html" class="mobile-nav-item active" data-page="feed"><i class="fas fa-home"></i><span>Home</span></a>
-    <a href="/explore.html" class="mobile-nav-item" data-page="explore"><i class="fas fa-compass"></i><span>Explore</span></a>
-    <a href="#" class="mobile-nav-item" data-page="create" onclick="openCreatePostModal();return false;"><i class="fas fa-plus-square"></i><span>Post</span></a>
-    <a href="/profile.html" class="mobile-nav-item" data-page="profile"><i class="fas fa-user"></i><span>Profile</span></a>
-    <a href="/settings.html" class="mobile-nav-item" data-page="settings"><i class="fas fa-cog"></i><span>Settings</span></a>
-  </div>
-</nav>
-
-<!-- FAB -->
-<button class="fab" onclick="openCreatePostModal()" title="Create Post" aria-label="Create new post">
-  <i class="fas fa-plus"></i>
-</button>
-
-<!-- Create Post Modal -->
-<div class="modal-overlay" id="createPostModal">
-  <div class="modal" style="max-width:520px;">
-    <div class="modal-header">
-      <h3><i class="fas fa-pen" style="color:var(--accent-primary);margin-right:8px;"></i>Create Post</h3>
-      <button class="modal-close" onclick="closeCreatePostModal()"><i class="fas fa-times"></i></button>
-    </div>
-    <div class="modal-body">
-      <div style="display:flex;gap:12px;align-items:flex-start;">
-        <div id="modalPostAvatar"></div>
-        <textarea
-          id="modalPostContent"
-          class="form-input"
-          placeholder="What's on your mind?"
-          rows="4"
-          maxlength="500"
-          style="resize:none;flex:1;"
-          oninput="updateModalCharCount(this)"
-        ></textarea>
-      </div>
-      <div id="modalImagePreview" style="display:none;margin-top:12px;position:relative;">
-        <img id="modalPreviewImg" src="" alt="Preview" style="width:100%;max-height:240px;object-fit:cover;border-radius:var(--radius-md);" />
-        <button type="button" onclick="clearModalImage()" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.6);color:white;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:0.9rem;"><i class="fas fa-times"></i></button>
-      </div>
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;">
-        <div style="display:flex;gap:4px;">
-          <label for="modalImageInput" class="create-post-action-btn" style="cursor:pointer;">
-            <i class="fas fa-image"></i> Photo
-            <input type="file" id="modalImageInput" accept="image/*" style="display:none;" onchange="previewModalImage(this)" />
-          </label>
-        </div>
-        <div style="display:flex;align-items:center;gap:12px;">
-          <span style="font-size:0.78rem;color:var(--text-muted);"><span id="modalCharCount">0</span>/500</span>
-          <button class="btn btn-primary btn-sm btn-round" id="modalPostBtn" onclick="submitModalPost()" disabled>
-            <i class="fas fa-paper-plane"></i> Post
-          </button>
-        </div>
       </div>
     </div>
   </div>
-</div>
 
-<!-- Back to Top -->
-<button class="back-to-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
+  <!-- Back to Top -->
+  <button class="back-to-top" aria-label="Back to top"><i class="fas fa-arrow-up"></i></button>
 
-<!-- Toast Container -->
-<div class="toast-container" id="toastContainer"></div>
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
 
-<script src="js/utils.js"></script>
-<script>
-  // Set create post avatar
-  document.addEventListener('DOMContentLoaded', () => {
-    const avatarEl = document.getElementById('createPostAvatar');
-    const headerAvatarLink = document.getElementById('headerAvatarLink');
-    // avatar is set after user loads in feed.js
-    // placeholder while loading
-    avatarEl.innerHTML = `<div class="skeleton skeleton-avatar" style="flex-shrink:0;"></div>`;
-  });
-
-  // Override renderUserSidebar to also set create-post avatar
-  const _originalRender = window.renderUserSidebar;
-</script>
-<script src="js/feed.js"></script>
-<script>
-  // After feed.js loads, patch create post avatar
-  const _origRenderSidebar = renderUserSidebar;
-  window.renderUserSidebar = function() {
-    _origRenderSidebar.call(this);
-    if (currentUser) {
+  <script src="js/utils.js"></script>
+  <script>
+    // Set create post avatar
+    document.addEventListener('DOMContentLoaded', () => {
       const avatarEl = document.getElementById('createPostAvatar');
-      if (avatarEl) {
-        avatarEl.innerHTML = currentUser.profile_image
-          ? `<img src="${escapeHtml(currentUser.profile_image)}" alt="${escapeHtml(currentUser.name)}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid var(--accent-primary);" />`
-          : `<div class="avatar-placeholder" style="width:44px;height:44px;font-size:1rem;flex-shrink:0;">${getInitials(currentUser.name)}</div>`;
+      const headerAvatarLink = document.getElementById('headerAvatarLink');
+      // avatar is set after user loads in feed.js
+      // placeholder while loading
+      avatarEl.innerHTML = `<div class="skeleton skeleton-avatar" style="flex-shrink:0;"></div>`;
+    });
+
+    // Override renderUserSidebar to also set create-post avatar
+    const _originalRender = window.renderUserSidebar;
+  </script>
+  <script src="js/feed.js"></script>
+  <script>
+    // After feed.js loads, patch create post avatar
+    const _origRenderSidebar = renderUserSidebar;
+    window.renderUserSidebar = function () {
+      _origRenderSidebar.call(this);
+      if (currentUser) {
+        const avatarEl = document.getElementById('createPostAvatar');
+        if (avatarEl) {
+          avatarEl.innerHTML = currentUser.profile_image
+            ? `<img src="${escapeHtml(currentUser.profile_image)}" alt="${escapeHtml(currentUser.name)}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid var(--accent-primary);" />`
+            : `<div class="avatar-placeholder" style="width:44px;height:44px;font-size:1rem;flex-shrink:0;">${getInitials(currentUser.name)}</div>`;
+        }
+        const link = document.getElementById('headerAvatarLink');
+        if (link) link.href = `/profile.html?id=${currentUser.id}`;
       }
-      const link = document.getElementById('headerAvatarLink');
-      if (link) link.href = `/profile.html?id=${currentUser.id}`;
-    }
-  };
-</script>
+    };
+  </script>
 </body>
+
 </html>

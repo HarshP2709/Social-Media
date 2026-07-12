@@ -1,8 +1,8 @@
-# 🌐 SocialSphere – Full Stack Social Media Platform
+# 🌐 PulseFeed – Full Stack Social Media Platform
 
 <div align="center">
 
-![SocialSphere Banner](https://via.placeholder.com/1200x400/6c63ff/ffffff?text=SocialSphere+Social+Media+Platform)
+![PulseFeed Banner](https://via.placeholder.com/1200x400/6c63ff/ffffff?text=PulseFeed+Social+Media+Platform)
 
 [![Node.js](https://img.shields.io/badge/Node.js-v18+-339933?style=for-the-badge&logo=node.js)](https://nodejs.org)
 [![Express.js](https://img.shields.io/badge/Express.js-4.x-000000?style=for-the-badge&logo=express)](https://expressjs.com)
@@ -38,7 +38,7 @@
 
 ## 🚀 Overview
 
-**SocialSphere** is a modern, full-stack social media platform built as an internship-level project. It delivers a complete social media experience with user authentication, post creation, real-time-like interactions, follow systems, notifications, search, and a fully responsive UI — without any frontend frameworks.
+**PulseFeed** is a modern, full-stack social media platform built as an internship-level project. It delivers a complete social media experience with user authentication, post creation, real-time-like interactions, follow systems, notifications, search, and a fully responsive UI — without any frontend frameworks.
 
 Built with:
 - **Pure HTML5, CSS3, Vanilla JavaScript (ES6+)**

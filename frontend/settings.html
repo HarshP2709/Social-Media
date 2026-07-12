@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="light">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Settings – SocialSphere</title>
+  <title>Settings – PulseFeed</title>
   <link rel="stylesheet" href="css/base.css" />
   <link rel="stylesheet" href="css/header.css" />
   <link rel="stylesheet" href="css/sidebar.css" />
@@ -11,199 +12,217 @@
   <link rel="stylesheet" href="css/profile.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
+
 <body>
-<header class="app-header">
-  <a href="/feed.html" class="header-logo"><i class="fas fa-infinity"></i> SocialSphere</a>
-  <div class="header-search">
-    <i class="fas fa-search search-icon"></i>
-    <input type="search" id="headerSearch" placeholder="Search…" autocomplete="off" />
-    <div class="search-suggestions" id="searchSuggestions"></div>
-  </div>
-  <div class="header-actions">
-    <button class="header-btn" id="themeToggleBtn"><i class="fas fa-moon"></i></button>
-    <a href="/feed.html" class="header-btn"><i class="fas fa-home"></i></a>
-    <div class="dropdown">
-      <button class="header-btn" onclick="toggleDropdown(this)"><i class="fas fa-bars"></i></button>
-      <div class="dropdown-menu">
-        <div class="dropdown-item" onclick="window.location.href='/profile.html'"><i class="fas fa-user"></i> Profile</div>
-        <div class="dropdown-item danger" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Log Out</div>
-      </div>
+  <header class="app-header">
+    <a href="/feed.html" class="header-logo"><i class="fas fa-infinity"></i> PulseFeed</a>
+    <div class="header-search">
+      <i class="fas fa-search search-icon"></i>
+      <input type="search" id="headerSearch" placeholder="Search…" autocomplete="off" />
+      <div class="search-suggestions" id="searchSuggestions"></div>
     </div>
-  </div>
-</header>
-
-<div class="app-layout">
-  <aside class="left-sidebar">
-    <nav class="sidebar-nav">
-      <a href="/feed.html" class="nav-item"><i class="fas fa-home"></i><span class="nav-label">Home</span></a>
-      <a href="/explore.html" class="nav-item"><i class="fas fa-compass"></i><span class="nav-label">Explore</span></a>
-      <a href="/profile.html" class="nav-item"><i class="fas fa-user"></i><span class="nav-label">Profile</span></a>
-      <a href="/settings.html" class="nav-item active"><i class="fas fa-cog"></i><span class="nav-label">Settings</span></a>
-      <a href="#" class="nav-item" onclick="logout();return false;"><i class="fas fa-sign-out-alt"></i><span class="nav-label">Log Out</span></a>
-    </nav>
-  </aside>
-
-  <main class="main-content">
-    <div class="card" style="padding:24px;margin-bottom:16px;">
-      <h2 style="margin-bottom:4px;"><i class="fas fa-user-edit" style="color:var(--accent-primary);margin-right:8px;"></i>Edit Profile</h2>
-      <p style="font-size:0.875rem;color:var(--text-muted);">Update your profile information.</p>
-    </div>
-
-    <!-- Profile Section -->
-    <div class="card" style="padding:24px;">
-
-      <!-- Avatar -->
-      <div class="avatar-upload-wrap">
-        <div id="settingsAvatarWrap">
-          <div class="profile-avatar-placeholder avatar-upload-img" style="width:80px;height:80px;font-size:1.8rem;" id="settingsAvatarPlaceholder">?</div>
-        </div>
-        <div class="avatar-upload-actions">
-          <label for="avatarInput" class="btn btn-secondary btn-sm" style="cursor:pointer;"><i class="fas fa-camera"></i> Change Photo</label>
-          <input type="file" id="avatarInput" accept="image/*" style="display:none;" />
-          <span style="font-size:0.78rem;color:var(--text-muted);">JPG, PNG or GIF. Max 5MB</span>
-        </div>
-      </div>
-
-      <form id="profileForm" novalidate>
-        <div class="form-group">
-          <label class="form-label" for="editName">Full Name</label>
-          <input type="text" id="editName" class="form-input" maxlength="100" />
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="editBio">Bio</label>
-          <textarea id="editBio" class="form-input" rows="3" maxlength="160" style="resize:none;" placeholder="Tell people about yourself..."></textarea>
-          <div style="text-align:right;font-size:0.78rem;color:var(--text-muted);margin-top:3px;"><span id="bioCharCount">0</span>/160</div>
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="editWebsite">Website</label>
-          <input type="url" id="editWebsite" class="form-input" placeholder="https://yourwebsite.com" />
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="editLocation">Location</label>
-          <input type="text" id="editLocation" class="form-input" maxlength="100" placeholder="City, Country" />
-        </div>
-        <button type="submit" class="btn btn-primary" id="saveProfileBtn">
-          <i class="fas fa-save"></i> Save Changes
-        </button>
-      </form>
-    </div>
-  </main>
-
-  <aside class="right-sidebar">
-    <div class="widget">
-      <div class="widget-header">Quick Tips</div>
-      <div class="widget-body" style="padding:16px;">
-        <div style="display:flex;flex-direction:column;gap:12px;font-size:0.875rem;color:var(--text-secondary);">
-          <div><i class="fas fa-lightbulb" style="color:var(--warning);margin-right:6px;"></i> Add a profile picture to get 3x more followers</div>
-          <div><i class="fas fa-lightbulb" style="color:var(--warning);margin-right:6px;"></i> Complete your bio to improve discoverability</div>
-          <div><i class="fas fa-lightbulb" style="color:var(--warning);margin-right:6px;"></i> Post regularly to grow your following</div>
-          <div><i class="fas fa-lightbulb" style="color:var(--warning);margin-right:6px;"></i> Use hashtags to reach more people</div>
+    <div class="header-actions">
+      <button class="header-btn" id="themeToggleBtn"><i class="fas fa-moon"></i></button>
+      <a href="/feed.html" class="header-btn"><i class="fas fa-home"></i></a>
+      <div class="dropdown">
+        <button class="header-btn" onclick="toggleDropdown(this)"><i class="fas fa-bars"></i></button>
+        <div class="dropdown-menu">
+          <div class="dropdown-item" onclick="window.location.href='/profile.html'"><i class="fas fa-user"></i> Profile
+          </div>
+          <div class="dropdown-item danger" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Log Out</div>
         </div>
       </div>
     </div>
-  </aside>
-</div>
+  </header>
 
-<nav class="mobile-nav">
-  <div class="mobile-nav-items">
-    <a href="/feed.html" class="mobile-nav-item" data-page="feed"><i class="fas fa-home"></i><span>Home</span></a>
-    <a href="/explore.html" class="mobile-nav-item" data-page="explore"><i class="fas fa-compass"></i><span>Explore</span></a>
-    <a href="/profile.html" class="mobile-nav-item" data-page="profile"><i class="fas fa-user"></i><span>Profile</span></a>
-    <a href="/settings.html" class="mobile-nav-item active" data-page="settings"><i class="fas fa-cog"></i><span>Settings</span></a>
+  <div class="app-layout">
+    <aside class="left-sidebar">
+      <nav class="sidebar-nav">
+        <a href="/feed.html" class="nav-item"><i class="fas fa-home"></i><span class="nav-label">Home</span></a>
+        <a href="/explore.html" class="nav-item"><i class="fas fa-compass"></i><span
+            class="nav-label">Explore</span></a>
+        <a href="/profile.html" class="nav-item"><i class="fas fa-user"></i><span class="nav-label">Profile</span></a>
+        <a href="/settings.html" class="nav-item active"><i class="fas fa-cog"></i><span
+            class="nav-label">Settings</span></a>
+        <a href="#" class="nav-item" onclick="logout();return false;"><i class="fas fa-sign-out-alt"></i><span
+            class="nav-label">Log Out</span></a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <div class="card" style="padding:24px;margin-bottom:16px;">
+        <h2 style="margin-bottom:4px;"><i class="fas fa-user-edit"
+            style="color:var(--accent-primary);margin-right:8px;"></i>Edit Profile</h2>
+        <p style="font-size:0.875rem;color:var(--text-muted);">Update your profile information.</p>
+      </div>
+
+      <!-- Profile Section -->
+      <div class="card" style="padding:24px;">
+
+        <!-- Avatar -->
+        <div class="avatar-upload-wrap">
+          <div id="settingsAvatarWrap">
+            <div class="profile-avatar-placeholder avatar-upload-img" style="width:80px;height:80px;font-size:1.8rem;"
+              id="settingsAvatarPlaceholder">?</div>
+          </div>
+          <div class="avatar-upload-actions">
+            <label for="avatarInput" class="btn btn-secondary btn-sm" style="cursor:pointer;"><i
+                class="fas fa-camera"></i> Change Photo</label>
+            <input type="file" id="avatarInput" accept="image/*" style="display:none;" />
+            <span style="font-size:0.78rem;color:var(--text-muted);">JPG, PNG or GIF. Max 5MB</span>
+          </div>
+        </div>
+
+        <form id="profileForm" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="editName">Full Name</label>
+            <input type="text" id="editName" class="form-input" maxlength="100" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="editBio">Bio</label>
+            <textarea id="editBio" class="form-input" rows="3" maxlength="160" style="resize:none;"
+              placeholder="Tell people about yourself..."></textarea>
+            <div style="text-align:right;font-size:0.78rem;color:var(--text-muted);margin-top:3px;"><span
+                id="bioCharCount">0</span>/160</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="editWebsite">Website</label>
+            <input type="url" id="editWebsite" class="form-input" placeholder="https://yourwebsite.com" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="editLocation">Location</label>
+            <input type="text" id="editLocation" class="form-input" maxlength="100" placeholder="City, Country" />
+          </div>
+          <button type="submit" class="btn btn-primary" id="saveProfileBtn">
+            <i class="fas fa-save"></i> Save Changes
+          </button>
+        </form>
+      </div>
+    </main>
+
+    <aside class="right-sidebar">
+      <div class="widget">
+        <div class="widget-header">Quick Tips</div>
+        <div class="widget-body" style="padding:16px;">
+          <div style="display:flex;flex-direction:column;gap:12px;font-size:0.875rem;color:var(--text-secondary);">
+            <div><i class="fas fa-lightbulb" style="color:var(--warning);margin-right:6px;"></i> Add a profile picture
+              to get 3x more followers</div>
+            <div><i class="fas fa-lightbulb" style="color:var(--warning);margin-right:6px;"></i> Complete your bio to
+              improve discoverability</div>
+            <div><i class="fas fa-lightbulb" style="color:var(--warning);margin-right:6px;"></i> Post regularly to grow
+              your following</div>
+            <div><i class="fas fa-lightbulb" style="color:var(--warning);margin-right:6px;"></i> Use hashtags to reach
+              more people</div>
+          </div>
+        </div>
+      </div>
+    </aside>
   </div>
-</nav>
 
-<button class="back-to-top"><i class="fas fa-arrow-up"></i></button>
-<div class="toast-container" id="toastContainer"></div>
+  <nav class="mobile-nav">
+    <div class="mobile-nav-items">
+      <a href="/feed.html" class="mobile-nav-item" data-page="feed"><i class="fas fa-home"></i><span>Home</span></a>
+      <a href="/explore.html" class="mobile-nav-item" data-page="explore"><i
+          class="fas fa-compass"></i><span>Explore</span></a>
+      <a href="/profile.html" class="mobile-nav-item" data-page="profile"><i
+          class="fas fa-user"></i><span>Profile</span></a>
+      <a href="/settings.html" class="mobile-nav-item active" data-page="settings"><i
+          class="fas fa-cog"></i><span>Settings</span></a>
+    </div>
+  </nav>
 
-<script src="js/utils.js"></script>
-<script src="js/profile.js"></script>
-<script>
-  let currentUser = null;
+  <button class="back-to-top"><i class="fas fa-arrow-up"></i></button>
+  <div class="toast-container" id="toastContainer"></div>
 
-  document.addEventListener('DOMContentLoaded', async () => {
-    initTheme();
-    initThemeToggle();
-    initBackToTop();
-    initSearch();
+  <script src="js/utils.js"></script>
+  <script src="js/profile.js"></script>
+  <script>
+    let currentUser = null;
 
-    const { ok, data } = await apiFetch('/api/me');
-    if (!ok || !data.success) { window.location.href = '/login.html'; return; }
-    currentUser = data.user;
+    document.addEventListener('DOMContentLoaded', async () => {
+      initTheme();
+      initThemeToggle();
+      initBackToTop();
+      initSearch();
 
-    populateProfile(currentUser);
+      const { ok, data } = await apiFetch('/api/me');
+      if (!ok || !data.success) { window.location.href = '/login.html'; return; }
+      currentUser = data.user;
 
-    // Bio char counter
-    const bioInput = document.getElementById('editBio');
-    bioInput.addEventListener('input', () => {
-      document.getElementById('bioCharCount').textContent = bioInput.value.length;
-    });
+      populateProfile(currentUser);
 
-    // Avatar preview
-    document.getElementById('avatarInput').addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        const wrap = document.getElementById('settingsAvatarWrap');
-        wrap.innerHTML = `<img src="${ev.target.result}" alt="Avatar" class="avatar-upload-img" style="width:80px;height:80px;border-radius:50%;object-fit:cover;" />`;
-      };
-      reader.readAsDataURL(file);
-    });
-
-    // Profile form
-    document.getElementById('profileForm').addEventListener('submit', saveProfile);
-  });
-
-  function populateProfile(user) {
-    document.getElementById('editName').value = user.name || '';
-    document.getElementById('editBio').value = user.bio || '';
-    document.getElementById('bioCharCount').textContent = (user.bio || '').length;
-    document.getElementById('editWebsite').value = user.website || '';
-    document.getElementById('editLocation').value = user.location || '';
-
-    const wrap = document.getElementById('settingsAvatarWrap');
-    if (user.profile_image) {
-      wrap.innerHTML = `<img src="${escapeHtml(user.profile_image)}" alt="Avatar" class="avatar-upload-img" style="width:80px;height:80px;border-radius:50%;object-fit:cover;" />`;
-    } else {
-      document.getElementById('settingsAvatarPlaceholder').textContent = getInitials(user.name);
-    }
-  }
-
-  async function saveProfile(e) {
-    e.preventDefault();
-    const btn = document.getElementById('saveProfileBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-
-    const formData = new FormData();
-    formData.append('name', document.getElementById('editName').value.trim());
-    formData.append('bio', document.getElementById('editBio').value.trim());
-    formData.append('website', document.getElementById('editWebsite').value.trim());
-    formData.append('location', document.getElementById('editLocation').value.trim());
-
-    const avatarFile = document.getElementById('avatarInput').files[0];
-    if (avatarFile) formData.append('profile_image', avatarFile);
-
-    try {
-      const { ok, data } = await apiFetch(`/api/users/${currentUser.id}`, {
-        method: 'PUT',
-        body: formData,
-        headers: {}
+      // Bio char counter
+      const bioInput = document.getElementById('editBio');
+      bioInput.addEventListener('input', () => {
+        document.getElementById('bioCharCount').textContent = bioInput.value.length;
       });
-      if (ok && data.success) {
-        currentUser = { ...currentUser, ...data.user };
-        populateProfile(currentUser);
-        showToast('Profile updated successfully!', 'success');
+
+      // Avatar preview
+      document.getElementById('avatarInput').addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const wrap = document.getElementById('settingsAvatarWrap');
+          wrap.innerHTML = `<img src="${ev.target.result}" alt="Avatar" class="avatar-upload-img" style="width:80px;height:80px;border-radius:50%;object-fit:cover;" />`;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // Profile form
+      document.getElementById('profileForm').addEventListener('submit', saveProfile);
+    });
+
+    function populateProfile(user) {
+      document.getElementById('editName').value = user.name || '';
+      document.getElementById('editBio').value = user.bio || '';
+      document.getElementById('bioCharCount').textContent = (user.bio || '').length;
+      document.getElementById('editWebsite').value = user.website || '';
+      document.getElementById('editLocation').value = user.location || '';
+
+      const wrap = document.getElementById('settingsAvatarWrap');
+      if (user.profile_image) {
+        wrap.innerHTML = `<img src="${escapeHtml(user.profile_image)}" alt="Avatar" class="avatar-upload-img" style="width:80px;height:80px;border-radius:50%;object-fit:cover;" />`;
       } else {
-        showToast(data.message || 'Update failed', 'error');
+        document.getElementById('settingsAvatarPlaceholder').textContent = getInitials(user.name);
       }
-    } catch { showToast('Network error', 'error'); }
-    finally {
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
     }
-  }
-</script>
+
+    async function saveProfile(e) {
+      e.preventDefault();
+      const btn = document.getElementById('saveProfileBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+
+      const formData = new FormData();
+      formData.append('name', document.getElementById('editName').value.trim());
+      formData.append('bio', document.getElementById('editBio').value.trim());
+      formData.append('website', document.getElementById('editWebsite').value.trim());
+      formData.append('location', document.getElementById('editLocation').value.trim());
+
+      const avatarFile = document.getElementById('avatarInput').files[0];
+      if (avatarFile) formData.append('profile_image', avatarFile);
+
+      try {
+        const { ok, data } = await apiFetch(`/api/users/${currentUser.id}`, {
+          method: 'PUT',
+          body: formData,
+          headers: {}
+        });
+        if (ok && data.success) {
+          currentUser = { ...currentUser, ...data.user };
+          populateProfile(currentUser);
+          showToast('Profile updated successfully!', 'success');
+        } else {
+          showToast(data.message || 'Update failed', 'error');
+        }
+      } catch { showToast('Network error', 'error'); }
+      finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+      }
+    }
+  </script>
 </body>
+
 </html>

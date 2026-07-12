@@ -1,5 +1,5 @@
 -- ================================================================
--- SocialSphere – Auth Link + RLS Setup
+-- PulseFeed – Auth Link + RLS Setup
 -- Run this ENTIRE file in Supabase SQL Editor AFTER schema.sql
 --
 -- What this file does:
