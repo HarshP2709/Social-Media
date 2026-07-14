@@ -7,6 +7,9 @@ const fs = require('fs');
  * Handles profile images and post images
  */
 
+// Absolute path to uploads directory (backend/uploads)
+const UPLOADS_DIR = path.join(__dirname, '../uploads');
+
 // Ensure upload directories exist
 const createDirIfNotExists = (dir) => {
   if (!fs.existsSync(dir)) {
@@ -14,14 +17,14 @@ const createDirIfNotExists = (dir) => {
   }
 };
 
-createDirIfNotExists('uploads/profiles');
-createDirIfNotExists('uploads/posts');
+createDirIfNotExists(path.join(UPLOADS_DIR, 'profiles'));
+createDirIfNotExists(path.join(UPLOADS_DIR, 'posts'));
 
 // Storage configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadType = req.uploadType || 'posts';
-    const dest = uploadType === 'profile' ? 'uploads/profiles' : 'uploads/posts';
+    const dest = path.join(UPLOADS_DIR, uploadType === 'profile' ? 'profiles' : 'posts');
     createDirIfNotExists(dest);
     cb(null, dest);
   },
