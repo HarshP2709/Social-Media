@@ -27,7 +27,7 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  if (err.message && err.message.includes('Only image files')) {
+  if (err.message && err.message.includes('Only image and video files')) {
     return res.status(400).json({
       success: false,
       message: err.message

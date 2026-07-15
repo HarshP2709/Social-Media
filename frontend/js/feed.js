@@ -215,7 +215,7 @@ function createPostElement(post) {
 
     <div class="post-content">${formatPostContent(post.content)}</div>
 
-    ${post.image ? (post.image.match(/\\.(mp4|webm|ogg)$/i) ? `<video src="${escapeHtml(post.image)}" class="post-video" controls preload="metadata" style="max-height: 500px; width: 100%; object-fit: contain; background: #000; border-radius: 8px; margin-top: 10px;"></video>` : `<img src="${escapeHtml(post.image)}" class="post-image" alt="Post image" loading="lazy" onerror="this.style.display='none'" />`) : ''}
+    ${post.image ? (post.image.match(/\\.(mp4|webm|ogg|mov|mkv|avi)$/i) ? `<video src="${escapeHtml(post.image)}" class="post-video" controls preload="metadata" style="max-height: 500px; width: 100%; object-fit: contain; background: #000; border-radius: 8px; margin-top: 10px;"></video>` : `<img src="${escapeHtml(post.image)}" class="post-image" alt="Post image" loading="lazy" onerror="this.style.display='none'" />`) : ''}
 
     <div class="post-actions">
       <button class="action-btn like-btn ${post.user_liked ? 'liked' : ''}" id="like-btn-${post.id}" onclick="toggleLike('${post.id}', this)">
