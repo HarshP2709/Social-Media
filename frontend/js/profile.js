@@ -136,7 +136,7 @@ function createPostElement(post) {
         <div class="dropdown">
           <button class="post-menu-btn" onclick="toggleDropdown(this)"><i class="fas fa-ellipsis-h"></i></button>
           <div class="dropdown-menu">
-            <div class="dropdown-item" onclick="openEditPostModal('${escapeHtml(post.id)}', \`${escapeHtml(post.content).replace(/`/g,'\\`')}\`)">
+            <div class="dropdown-item" onclick="openEditPostModal('${escapeHtml(post.id)}', \`${escapeHtml(post.content).replace(/`/g, '\\`')}\`)">
               <i class="fas fa-edit"></i> Edit Post
             </div>
             <div class="dropdown-item danger" onclick="deletePost('${escapeHtml(post.id)}')">
@@ -154,7 +154,7 @@ function createPostElement(post) {
 
     <div class="post-content">${formatPostContent(post.content)}</div>
 
-    ${post.image ? `<img src="${escapeHtml(post.image)}" class="post-image" alt="Post image" loading="lazy" onerror="this.style.display='none'" />` : ''}
+    ${post.image ? (post.image.match(/\\.(mp4|webm|ogg)$/i) ? `<video src="${escapeHtml(post.image)}" class="post-video" controls preload="metadata" style="max-height: 500px; width: 100%; object-fit: contain; background: #000; border-radius: 8px; margin-top: 10px;"></video>` : `<img src="${escapeHtml(post.image)}" class="post-image" alt="Post image" loading="lazy" onerror="this.style.display='none'" />`) : ''}
 
     <div class="post-actions">
       <button class="action-btn like-btn ${post.user_liked ? 'liked' : ''}" id="like-btn-${post.id}" onclick="toggleLike('${post.id}', this)">
@@ -177,9 +177,9 @@ function createPostElement(post) {
       <div class="comments-inner">
         <div class="comment-input-row">
           ${currentUser && currentUser.profile_image
-            ? `<img src="${escapeHtml(currentUser.profile_image)}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;" />`
-            : `<div class="avatar-placeholder" style="width:32px;height:32px;font-size:0.75rem;">${getInitials(currentUser?.name)}</div>`
-          }
+      ? `<img src="${escapeHtml(currentUser.profile_image)}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;" />`
+      : `<div class="avatar-placeholder" style="width:32px;height:32px;font-size:0.75rem;">${getInitials(currentUser?.name)}</div>`
+    }
           <div class="comment-input-wrap">
             <textarea class="comment-input" id="comment-input-${post.id}" placeholder="Write a comment..." rows="1" oninput="autoResize(this)"></textarea>
             <button class="comment-send-btn" onclick="submitComment('${post.id}')"><i class="fas fa-paper-plane"></i></button>

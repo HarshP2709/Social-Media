@@ -62,8 +62,8 @@
           <div class="dropdown-item" onclick="window.location.href='/settings.html'"><i class="fas fa-cog"></i> Settings
           </div>
           <div class="dropdown-item"
-            onclick="toggleTheme() && document.getElementById('themeToggleBtn').innerHTML = document.documentElement.getAttribute(\'data-theme\')===\'dark\'?\'<i class=&quot;fas fa-sun&quot;></i>\':\'<i class=&quot;fas fa-moon&quot;></i>\'"">
-          <i class=" fas fa-moon"></i> Dark Mode
+            onclick="toggleTheme(); document.getElementById('themeToggleBtn').innerHTML = document.documentElement.getAttribute('data-theme')==='dark'?'<i class=&quot;fas fa-sun&quot;></i>':'<i class=&quot;fas fa-moon&quot;></i>';">
+            <i class=" fas fa-moon"></i> Dark Mode
           </div>
           <div class="dropdown-item danger" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Log Out</div>
         </div>
@@ -126,10 +126,11 @@
           </div>
           <div class="create-post-footer">
             <div class="create-post-actions">
-              <label for="postImageInput" class="create-post-action-btn" style="cursor:pointer;" title="Add image">
-                <i class="fas fa-image"></i> Photo
-                <input type="file" id="postImageInput" accept="image/*" style="display:none;"
-                  aria-label="Upload image" />
+              <label for="postImageInput" class="create-post-action-btn" style="cursor:pointer;"
+                title="Add image or video">
+                <i class="fas fa-image"></i> Photo/Video
+                <input type="file" id="postImageInput" accept="image/*,video/*" style="display:none;"
+                  aria-label="Upload image or video" />
               </label>
               <button type="button" class="create-post-action-btn"
                 onclick="document.getElementById('createPostContent').focus()" title="Add emoji">
@@ -270,8 +271,8 @@
         <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;">
           <div style="display:flex;gap:4px;">
             <label for="modalImageInput" class="create-post-action-btn" style="cursor:pointer;">
-              <i class="fas fa-image"></i> Photo
-              <input type="file" id="modalImageInput" accept="image/*" style="display:none;"
+              <i class="fas fa-image"></i> Photo/Video
+              <input type="file" id="modalImageInput" accept="image/*,video/*" style="display:none;"
                 onchange="previewModalImage(this)" />
             </label>
           </div>

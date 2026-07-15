@@ -197,7 +197,7 @@ function createPostElement(post) {
         <div class="dropdown">
           <button class="post-menu-btn" onclick="toggleDropdown(this)"><i class="fas fa-ellipsis-h"></i></button>
           <div class="dropdown-menu">
-            <div class="dropdown-item" onclick="openEditPostModal('${escapeHtml(post.id)}', \`${escapeHtml(post.content).replace(/`/g,'\\`')}\`)">
+            <div class="dropdown-item" onclick="openEditPostModal('${escapeHtml(post.id)}', \`${escapeHtml(post.content).replace(/`/g, '\\`')}\`)">
               <i class="fas fa-edit"></i> Edit Post
             </div>
             <div class="dropdown-item danger" onclick="deletePost('${escapeHtml(post.id)}')">
@@ -215,7 +215,7 @@ function createPostElement(post) {
 
     <div class="post-content">${formatPostContent(post.content)}</div>
 
-    ${post.image ? `<img src="${escapeHtml(post.image)}" class="post-image" alt="Post image" loading="lazy" onerror="this.style.display='none'" />` : ''}
+    ${post.image ? (post.image.match(/\\.(mp4|webm|ogg)$/i) ? `<video src="${escapeHtml(post.image)}" class="post-video" controls preload="metadata" style="max-height: 500px; width: 100%; object-fit: contain; background: #000; border-radius: 8px; margin-top: 10px;"></video>` : `<img src="${escapeHtml(post.image)}" class="post-image" alt="Post image" loading="lazy" onerror="this.style.display='none'" />`) : ''}
 
     <div class="post-actions">
       <button class="action-btn like-btn ${post.user_liked ? 'liked' : ''}" id="like-btn-${post.id}" onclick="toggleLike('${post.id}', this)">
@@ -238,9 +238,9 @@ function createPostElement(post) {
       <div class="comments-inner">
         <div class="comment-input-row">
           ${currentUser && currentUser.profile_image
-            ? `<img src="${escapeHtml(currentUser.profile_image)}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;" />`
-            : `<div class="avatar-placeholder" style="width:32px;height:32px;font-size:0.75rem;">${getInitials(currentUser?.name)}</div>`
-          }
+      ? `<img src="${escapeHtml(currentUser.profile_image)}" style="width:32px;height:32px;border-radius:50%;object-fit:cover;" />`
+      : `<div class="avatar-placeholder" style="width:32px;height:32px;font-size:0.75rem;">${getInitials(currentUser?.name)}</div>`
+    }
           <div class="comment-input-wrap">
             <textarea class="comment-input" id="comment-input-${post.id}" placeholder="Write a comment..." rows="1" oninput="autoResize(this)"></textarea>
             <button class="comment-send-btn" onclick="submitComment('${post.id}')"><i class="fas fa-paper-plane"></i></button>
@@ -590,7 +590,25 @@ function previewModalImage(input) {
   if (!file) return;
   const reader = new FileReader();
   reader.onload = (ev) => {
-    document.getElementById('modalPreviewImg').src = ev.target.result;
+    const isVideo = file.type.startsWith('video/');
+    const imgPreview = document.getElementById('modalPreviewImg');
+    let videoPreview = document.getElementById('modalPreviewVideo');
+    if (!videoPreview) {
+      videoPreview = document.createElement('video');
+      videoPreview.id = 'modalPreviewVideo';
+      videoPreview.controls = true;
+      videoPreview.style = 'width:100%;max-height:240px;object-fit:contain;border-radius:var(--radius-md);background:#000;';
+      imgPreview.parentNode.insertBefore(videoPreview, imgPreview);
+    }
+    if (isVideo) {
+      imgPreview.style.display = 'none';
+      videoPreview.src = ev.target.result;
+      videoPreview.style.display = 'block';
+    } else {
+      videoPreview.style.display = 'none';
+      imgPreview.src = ev.target.result;
+      imgPreview.style.display = 'block';
+    }
     document.getElementById('modalImagePreview').style.display = 'block';
   };
   reader.readAsDataURL(file);
@@ -603,6 +621,8 @@ function clearModalImage() {
   if (preview) preview.style.display = 'none';
   const img = document.getElementById('modalPreviewImg');
   if (img) img.src = '';
+  const video = document.getElementById('modalPreviewVideo');
+  if (video) video.src = '';
 }
 
 async function submitModalPost() {
@@ -668,7 +688,24 @@ function initCreatePost() {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (ev) => {
-      previewImg.src = ev.target.result;
+      const isVideo = file.type.startsWith('video/');
+      let videoPreview = document.getElementById('previewVideoEl');
+      if (!videoPreview) {
+        videoPreview = document.createElement('video');
+        videoPreview.id = 'previewVideoEl';
+        videoPreview.controls = true;
+        videoPreview.style = 'width:100%;max-height:300px;object-fit:contain;background:#000;border-radius:var(--radius-md);';
+        previewImg.parentNode.insertBefore(videoPreview, previewImg);
+      }
+      if (isVideo) {
+        previewImg.style.display = 'none';
+        videoPreview.src = ev.target.result;
+        videoPreview.style.display = 'block';
+      } else {
+        if (videoPreview) videoPreview.style.display = 'none';
+        previewImg.src = ev.target.result;
+        previewImg.style.display = 'block';
+      }
       imagePreview.style.display = 'block';
     };
     reader.readAsDataURL(file);
@@ -678,6 +715,8 @@ function initCreatePost() {
     imageInput.value = '';
     imagePreview.style.display = 'none';
     previewImg.src = '';
+    const videoPreview = document.getElementById('previewVideoEl');
+    if (videoPreview) videoPreview.src = '';
   });
 
   document.getElementById('createPostForm').addEventListener('submit', async (e) => {
@@ -705,6 +744,8 @@ function initCreatePost() {
         imageInput.value = '';
         imagePreview.style.display = 'none';
         previewImg.src = '';
+        const videoPreview = document.getElementById('previewVideoEl');
+        if (videoPreview) videoPreview.src = '';
 
         const feed = document.getElementById('feedContainer');
         const emptyState = feed.querySelector('.empty-state');
@@ -847,7 +888,7 @@ async function openNotifications(btn) {
     if (badge) { badge.textContent = '0'; badge.style.display = 'none'; }
 
     // Mark all read silently in background
-    apiFetch('/api/notifications/read', { method: 'PUT' }).catch(() => {});
+    apiFetch('/api/notifications/read', { method: 'PUT' }).catch(() => { });
 
   } catch {
     list.innerHTML = '<div style="padding:32px;text-align:center;color:var(--text-muted);font-size:0.875rem;">Could not load notifications.</div>';
@@ -867,9 +908,9 @@ function createNotifElement(n) {
   const icon = iconMap[n.type] || 'fa-bell';
 
   const textMap = {
-    like:    `<strong>${escapeHtml(sender.name || 'Someone')}</strong> liked your post`,
+    like: `<strong>${escapeHtml(sender.name || 'Someone')}</strong> liked your post`,
     comment: `<strong>${escapeHtml(sender.name || 'Someone')}</strong> commented on your post`,
-    follow:  `<strong>${escapeHtml(sender.name || 'Someone')}</strong> started following you`
+    follow: `<strong>${escapeHtml(sender.name || 'Someone')}</strong> started following you`
   };
   const text = textMap[n.type] || `<strong>${escapeHtml(sender.name || 'Someone')}</strong> interacted with you`;
 
