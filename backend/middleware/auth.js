@@ -9,7 +9,7 @@
 const requireAuth = (req, res, next) => {
   if (!req.session || !req.session.userId) {
     // API request - return JSON error
-    if (req.path.startsWith('/api/')) {
+    if (req.originalUrl.startsWith('/api/')) {
       return res.status(401).json({
         success: false,
         message: 'Authentication required. Please log in.'
